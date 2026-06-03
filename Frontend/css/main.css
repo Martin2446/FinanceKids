@@ -1,0 +1,86 @@
+body { 
+    font-family: 'Arial', sans-serif; 
+    background-color: #f0f8ff; 
+    text-align: center; 
+    padding: 20px; 
+}
+.container { 
+    max-width: 600px; 
+    margin: 0 auto; 
+    background: white; 
+    padding: 30px; 
+    border-radius: 15px; 
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1); 
+}
+.btn-diff { 
+    background-color: #4CAF50; 
+    color: white; 
+    border: none; 
+    padding: 10px 20px; 
+    font-size: 16px; 
+    margin: 5px; 
+    cursor: pointer; 
+    border-radius: 5px; 
+}
+.btn-option { 
+    display: block; 
+    width: 100%; 
+    background-color: #e7e7e7; 
+    color: black; 
+    border: none; 
+    padding: 12px; 
+    margin: 10px 0; 
+    font-size: 16px; 
+    cursor: pointer; 
+    border-radius: 8px; 
+    text-align: left; 
+}
+.btn-option:hover { 
+    background-color: #ddd; 
+}
+.form-group { 
+    margin-bottom: 15px; 
+    text-align: left; 
+}
+input { 
+    width: 95%; 
+    padding: 10px; 
+    font-size: 16px; 
+    border-radius: 5px; 
+    border: 1px solid #ccc; 
+}
+.btn-submit { 
+    background-color: #008CBA; 
+    color: white; 
+    border: none; 
+    padding: 10px 20px; 
+    font-size: 16px; 
+    cursor: pointer; 
+    border-radius: 5px; 
+    width: 100%; 
+}
+#result { 
+    font-weight: bold; 
+    font-size: 18px; 
+    margin-top: 15px; 
+}
+.auth-tabs {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #ddd;
+}
+.auth-tab-btn {
+    background: none;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #555;
+    width: 50%;
+}
+.auth-tab-btn.active {
+    color: #008CBA;
+    border-bottom: 3px solid #008CBA;
+}

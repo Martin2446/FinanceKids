@@ -2,84 +2,55 @@
 <html lang="bg">
 <head>
     <meta charset="UTF-8">
-    <title>Финанси за Деца 💰</title>
-    <style>
-        body { font-family: 'Arial', sans-serif; background-color: #f0f8ff; text-align: center; padding: 20px; }
-        .container { max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
-        .btn-diff { background-color: #4CAF50; color: white; border: none; padding: 10px 20px; font-size: 16px; margin: 5px; cursor: pointer; border-radius: 5px; }
-        .btn-option { display: block; width: 100%; background-color: #e7e7e7; color: black; border: none; padding: 12px; margin: 10px 0; font-size: 16px; cursor: pointer; border-radius: 8px; text-align: left; }
-        .btn-option:hover { background-color: #ddd; }
-        #result { font-weight: bold; font-size: 18px; margin-top: 15px; }
-    </style>
+    <title>Финанси за Деца</title>
+    <link rel="stylesheet" href="css/main.css">
 </head>
 <body>
 
 <div class="container">
-    <h1>Покори финансовия свят! 🪙</h1>
-    <p>Избери трудност, за да започнеш играта:</p>
-    
-    <button class="btn-diff" onclick="loadQuestions('easy')">Лесно👶</button>
-    <button class="btn-diff" onclick="loadQuestions('medium')">Средно🎒</button>
-    <button class="btn-diff" onclick="loadQuestions('hard')">Трудно🧠</button>
+    <h1>Покори финансовия свят!</h1>
 
-    <hr>
+    <div id="auth-box">
+        <div class="auth-tabs">
+            <button id="tab-login-btn" type="button" class="auth-tab-btn active" onclick="switchAuthTab('login')">Вход</button>
+            <button id="tab-register-btn" type="button" class="auth-tab-btn" onclick="switchAuthTab('register')">Регистрация</button>
+        </div>
 
-    <div id="quiz-box" style="display:none;">
-        <h2 id="question-text">Въпросът ще се зареди тук...</h2>
-        <div id="options-container"></div>
-        <p id="result"></p>
+        <h3 id="auth-title">Влез в профила си:</h3>
+        
+        <div class="form-group">
+            <label>Потребителско име:</label>
+            <input type="text" id="auth-username" autocomplete="off" placeholder="Въведи име...">
+        </div>
+        
+        <div class="form-group">
+            <label>Парола:</label>
+            <input type="password" id="auth-password" autocomplete="off" placeholder="Въведи парола...">
+        </div>
+        
+        <button id="auth-submit-btn" type="button" class="btn-submit" onclick="handleAuthSubmit(event)">Влез </button>
+        
+        <p id="auth-error" style="color: red; font-weight: bold; margin-top: 10px;"></p>
+    </div>
+
+    <div id="game-box" style="display: none;">
+        <h2 id="welcome-message">Добре дошъл!</h2>
+        <p>Избери трудност, за да започнеш играта:</p>
+        
+        <button class="btn-diff" onclick="loadQuestions('easy')">Лесно</button>
+        <button class="btn-diff" onclick="loadQuestions('medium')">Средно</button>
+        <button class="btn-diff" onclick="loadQuestions('hard')">Трудно</button>
+
+        <hr>
+
+        <div id="quiz-box" style="display:none;">
+            <h2 id="question-text">Въпросът ще се зареди тук...</h2>
+            <div id="options-container"></div>
+            <p id="result"></p>
+        </div>
     </div>
 </div>
 
-<script>
-    let currentQuestion = null;
-
-    // Функция, която вика Backend API-то чрез JavaScript Fetch
-    async function loadQuestions(difficulty) {
-        document.getElementById('result').innerText = "";
-        try {
-            const response = await fetch(`http://127.0.0.1:8000/api/questions?difficulty=${difficulty}`);
-            const questions = await response.json();
-            
-            if(questions.length > 0) {
-                // Вземаме първия въпрос от върнатите за тази трудност
-                currentQuestion = questions[0]; 
-                displayQuestion(currentQuestion);
-            } else {
-                alert("Няма намерени въпроси за тази трудност.");
-            }
-        } catch (error) {
-            console.error("Грешка при свързването с Backend:", error);
-        }
-    }
-
-    function displayQuestion(q) {
-        document.getElementById('quiz-box').style.display = "block";
-        document.getElementById('question-text').innerText = q.question;
-        
-        const container = document.getElementById('options-container');
-        container.innerHTML = ""; // Изчистваме старите отговори
-
-        q.options.forEach((option, index) => {
-            const button = document.createElement('button');
-            button.className = 'btn-option';
-            button.innerText = option;
-            button.onclick = () => checkAnswer(index);
-            container.appendChild(button);
-        });
-    }
-
-    function checkAnswer(selectedIndex) {
-        const resultElement = document.getElementById('result');
-        if(selectedIndex === currentQuestion.correct) {
-            resultElement.innerText = "🎉 Браво! Правилен отговор! Ти си истински спестовник! +10 точки 🪙";
-            resultElement.style.color = "green";
-        } else {
-            resultElement.innerText = "❌ Опа! Опитай пак. Помисли какво би било най-разумно да направиш с парите.";
-            resultElement.style.color = "red";
-        }
-    }
-</script>
-
+<script src="js/main.js"></script>
 </body>
 </html>

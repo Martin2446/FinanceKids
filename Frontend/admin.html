@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <title>Админ Панел</title>
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+<div class="container">
+    <div style="margin-bottom: 20px;">
+        <a href="index.html" style="color: #007bff; text-decoration: none; font-weight: bold;">⬅️ Назад</a>
+    </div>
+
+    <h1>Контролен панел</h1>
+    
+    <div class="main-nav">
+        <button id="nav-questions-btn" class="btn-main-tab active" onclick="switchAdminSection('questions')">Въпроси</button>
+        <button id="nav-users-btn" class="btn-main-tab" onclick="switchAdminSection('users')">Потребители</button>
+    </div>
+
+    <hr>
+    
+    <div id="section-questions">
+        <h3>Добавяне на нов въпрос</h3>
+        <div class="form-group">
+            <label>Трудност:</label>
+            <select id="q-diff">
+                <option value="easy">Лесно)</option>
+                <option value="medium">Средно</option>
+                <option value="hard">Трудно</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Текст на въпроса:</label>
+            <textarea id="q-text" rows="2" placeholder="Например: Какво е инфлация?"></textarea>
+        </div>
+        <div class="form-group"><label>Опция А (Индекс 0):</label><input type="text" id="opt-0"></div>
+        <div class="form-group"><label>Опция B (Индекс 1):</label><input type="text" id="opt-1"></div>
+        <div class="form-group"><label>Опция C (Индекс 2):</label><input type="text" id="opt-2"></div>
+        <div class="form-group"><label>Опция D (Индекс 3):</label><input type="text" id="opt-3"></div>
+        <div class="form-group">
+            <label>Индекс на правилния отговор (0, 1, 2 или 3):</label>
+            <select id="q-correct">
+                <option value="0">Опция А (0)</option>
+                <option value="1">Опция B (1)</option>
+                <option value="2">Опция C (2)</option>
+                <option value="3">Опция D (3)</option>
+            </select>
+        </div>
+        <button class="btn-add" onclick="addQuestion()">Запази въпроса</button>
+
+        <hr style="margin: 30px 0;">
+
+        <h3>📋 Списък с текущи въпроси</h3>
+        <div class="nav-buttons">
+            <button class="btn-tab" onclick="loadAdminQuestions('easy')">Лесни въпроси</button>
+            <button class="btn-tab" onclick="loadAdminQuestions('medium')">Средни въпроси</button>
+            <button class="btn-tab" onclick="loadAdminQuestions('hard')">Трудни въпроси</button>
+        </div>
+
+        <div id="admin-questions-list">
+            <p style="color: gray; text-align: center;">Изберете категория от бутоните по-горе, за да видите въпросите.</p>
+        </div>
+    </div>
+
+    <div id="section-users" style="display: none;">
+        <h3>Създаване на нов потребителски профил</h3>
+        <div class="form-group">
+            <label>Потребителско име:</label>
+            <input type="text" id="u-username" placeholder="Въведи име...">
+        </div>
+        <div class="form-group">
+            <label>Парола:</label>
+            <input type="password" id="u-password" placeholder="Въведи парола...">
+        </div>
+        <button class="btn-add" style="background-color: #007bff;" onclick="adminAddUser()">Добави потребител</button>
+
+        <hr style="margin: 30px 0;">
+
+        <h3>Профили</h3>
+        <div id="admin-users-list">
+            Зареждане на потребителите...
+        </div>
+    </div>
+
+</div>
+
+<script src="js/admin.js"></script>
+</body>
+</html>
