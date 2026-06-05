@@ -6,7 +6,6 @@ let currentAuthMode = 'login';
 function switchAuthTab(mode) {
     currentAuthMode = mode;
     document.getElementById('auth-error').innerText = "";
-    
     const loginBtn = document.getElementById('tab-login-btn');
     const registerBtn = document.getElementById('tab-register-btn');
     const title = document.getElementById('auth-title');
@@ -20,13 +19,15 @@ function switchAuthTab(mode) {
     } else {
         registerBtn.classList.add('active');
         loginBtn.classList.remove('active');
-        title.innerText = "Създай си профил, за да играеш:";
+        title.innerText = "Създай си профил:";
         submitBtn.innerText = "Регистрирай ме";
     }
 }
 
 async function handleAuthSubmit(event) {
-    if (event) event.preventDefault();
+    if (event) {
+        event.preventDefault();
+    }
 
     const usernameInput = document.getElementById('auth-username').value;
     const passwordInput = document.getElementById('auth-password').value;
@@ -55,16 +56,24 @@ async function handleAuthSubmit(event) {
 
         if (response.ok) {
             loggedInUser = data.username;
-            userPoints = data.points;
+            
+            const localPoints = localStorage.getItem(`points_${loggedInUser}`);
+            if (localPoints !== null) {
+                userPoints = parseInt(localPoints);
+            } else {
+                userPoints = data.points || 0;
+            }
+            
+            localStorage.setItem('game_user', loggedInUser);
+            localStorage.setItem('game_points', userPoints);
+            localStorage.setItem(`points_${loggedInUser}`, userPoints);
             
             document.getElementById('auth-box').style.display = 'none';
             document.getElementById('game-box').style.display = 'block';
-
             document.getElementById('welcome-message').innerText = `Добре дошъл, ${loggedInUser}! (Точки: ${userPoints})`;
-            
             errorElement.innerText = "";
         } else {
-            errorElement.innerText = data.detail || "Възникна грешка.";
+            errorElement.innerText = data.detail || "Грешка!";
         }
     } catch (error) {
         console.error("Грешка:", error);
@@ -79,10 +88,10 @@ async function loadQuestions(difficulty) {
         const questions = await response.json();
         
         if(questions.length > 0) {
-            currentQuestion = questions[0]; 
+            currentQuestion = questions[Math.floor(Math.random() * questions.length)]; 
             displayQuestion(currentQuestion);
         } else {
-            alert("Няма намерени въпроси за тази трудност.");
+            alert("Няма намерени въпроси.");
         }
     } catch (error) {
         console.error("Грешка:", error);
@@ -92,7 +101,6 @@ async function loadQuestions(difficulty) {
 function displayQuestion(q) {
     document.getElementById('quiz-box').style.display = "block";
     document.getElementById('question-text').innerText = q.question;
-    
     const container = document.getElementById('options-container');
     container.innerHTML = ""; 
 
@@ -107,9 +115,17 @@ function displayQuestion(q) {
 
 function checkAnswer(selectedIndex) {
     const resultElement = document.getElementById('result');
+    
     if(selectedIndex === currentQuestion.correct) {
-        resultElement.innerText = "Браво! Правилен отговор!";
+        userPoints += 10;
+        
+        localStorage.setItem('game_points', userPoints);
+        localStorage.setItem(`points_${loggedInUser}`, userPoints);
+        
+        resultElement.innerText = "Браво! Правилен отговор! +10 точки 🪙";
         resultElement.style.color = "green";
+        
+        document.getElementById('welcome-message').innerText = `Добре дошъл, ${loggedInUser}! (Точки: ${userPoints})`;
     } else {
         resultElement.innerText = "❌ Опа! Опитай пак.";
         resultElement.style.color = "red";

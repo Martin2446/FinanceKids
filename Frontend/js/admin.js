@@ -117,7 +117,6 @@ async function loadAdminUsers() {
             div.innerHTML = `
                 <div>
                     <strong>ID: ${u.id} | Потребител: ${u.username}</strong> <br>
-                    <small style="color: #666;">Текущи точки: ${u.points}</small>
                 </div>
                 <button class="btn-delete" onclick="deleteUser(${u.id}, '${u.username}')">Изтрий профил ❌</button>
             `;

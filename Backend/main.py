@@ -91,7 +91,7 @@ def get_questions(difficulty: str = Query(..., description="Трудност: ea
         questions.append({
             "id": row["id"],
             "question": row["question"],
-            "options": json.loads(row["options"]), # Превръщаме JSON текста обратно в списък
+            "options": json.loads(row["options"]),
             "correct": row["correct"]
         })
     return questions
@@ -229,3 +229,26 @@ def delete_user(user_id: int):
     conn.commit()
     conn.close()
     return {"message": f"Потребителят с ID {user_id} е изтрит успешно!"}
+
+class UpdatePointsModel(BaseModel):
+    username: str
+    points_to_add: int
+
+@app.post("/api/users/update_points")
+def update_user_points(data: UpdatePointsModel):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    cursor.execute("SELECT points FROM users WHERE username = ?", (data.username,))
+    user = cursor.fetchone()
+    
+    if not user:
+        conn.close()
+        raise HTTPException(status_code=404, detail="Потребителят не е намерен!")
+    
+    new_points = user["points"] + data.points_to_add
+    cursor.execute("UPDATE users SET points = ? WHERE username = ?", (new_points, data.username))
+    conn.commit()
+    conn.close()
+    
+    return {"message": "Точките са обновени успешно!", "new_points": new_points}
