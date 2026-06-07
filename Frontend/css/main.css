@@ -1,8 +1,15 @@
 body {
     font-family: Arial, sans-serif;
-    background-color: #eef2f3;
-    padding: 20px;
+    /* Модерен градиент, който прелива по диагонал */
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #2ecc71 100%);
+    background-attachment: fixed; /* Заключва градиента, за да не се разтяга при скрол */
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     margin: 0;
+    padding: 20px;
+    box-sizing: border-box;
 }
 
 .container {
@@ -94,4 +101,72 @@ body {
     font-size: 18px;
     text-align: center;
     margin-top: 15px;
+}
+
+/* ДОБАВИ НАЙ-ОТДОЛУ В css/game.css */
+
+.badges-section {
+    margin-top: 25px;
+    background: #fdfdfd;
+    padding: 15px;
+    border-radius: 10px;
+    border: 1px dashed #bbb;
+}
+
+.badges-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 10px;
+    flex-wrap: wrap; /* За по-малки екрани да се пренасят */
+}
+
+.badge {
+    flex: 1;
+    min-width: 90px;
+    padding: 10px 5px;
+    background: #fff;
+    border-radius: 8px;
+    text-align: center;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    transition: all 0.4s ease;
+}
+
+.badge-icon {
+    font-size: 28px;
+    margin-bottom: 5px;
+}
+
+.badge-name {
+    font-size: 12px;
+    font-weight: bold;
+    color: #333;
+}
+
+.badge-desc {
+    font-size: 10px;
+    color: #777;
+    margin-top: 3px;
+}
+
+.badge.locked {
+    filter: grayscale(100%);
+    opacity: 0.4;
+    border-style: dotted;
+}
+
+.badge.unlocked {
+    filter: grayscale(0%);
+    opacity: 1;
+    border: 2px solid #2ecc71;
+    background: #ebfbe6;
+    transform: scale(1.05);
+    animation: unlockGlow 1s ease-in-out;
+}
+
+@keyframes unlockGlow {
+    0% { box-shadow: 0 0 0px rgba(46, 204, 113, 0); }
+    50% { box-shadow: 0 0 15px rgba(46, 204, 113, 0.8); }
+    100% { box-shadow: 0 0 0px rgba(46, 204, 113, 0); }
 }

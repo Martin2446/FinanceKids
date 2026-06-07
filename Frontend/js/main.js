@@ -11,6 +11,7 @@ if (!loggedInUser) {
     } else {
         document.getElementById('welcome-message').innerText = `Добре дошъл, ${loggedInUser}! (Точки: ${userPoints})`;
     }
+    updateBadges();
 }
 
 async function loadQuestions(difficulty) {
@@ -52,6 +53,7 @@ async function checkAnswer(selectedIndex) {
         userPoints += 10;
         sessionStorage.setItem('userPoints', userPoints);
 
+        updateBadges();
         const isGuest = sessionStorage.getItem('isGuest') === 'true';
 
         if (isGuest) {
@@ -78,4 +80,27 @@ async function checkAnswer(selectedIndex) {
         resultElement.innerText = "❌ Опа! Опитай пак.";
         resultElement.style.color = "red";
     }
+}
+
+function updateBadges() {
+    const badges = [
+        { id: 'badge-first_points', target: 10 },
+        { id: 'badge-apprentice', target: 50 },
+        { id: 'badge-ninja', target: 100 },
+        { id: 'badge-guru', target: 200 },
+        { id: 'badge-millionaire', target: 500 }
+    ];
+
+    badges.forEach(b => {
+        const badgeElement = document.getElementById(b.id);
+        if (badgeElement) {
+            if (userPoints >= b.target) {
+                badgeElement.classList.remove('locked');
+                badgeElement.classList.add('unlocked');
+            } else {
+                badgeElement.classList.add('locked');
+                badgeElement.classList.remove('unlocked');
+            }
+        }
+    });
 }
