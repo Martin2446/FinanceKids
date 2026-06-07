@@ -2,55 +2,34 @@
 <html lang="bg">
 <head>
     <meta charset="UTF-8">
-    <title>Финанси за Деца</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finance Kids - Игра</title>
     <link rel="stylesheet" href="css/main.css">
 </head>
 <body>
+    <div class="container">
+        <div id="game-box">
+            <div class="game-header">
+                <h2 id="welcome-message">Зареждане на профил...</h2>
+            </div>
 
-<div class="container">
-    <h1>Покори финансовия свят!</h1>
+            <div class="difficulty-section">
+                <h3>Изберете трудност:</h3>
+                <div class="diff-buttons">
+                    <button onclick="loadQuestions('easy')" class="btn-diff easy">Лесно</button>
+                    <button onclick="loadQuestions('medium')" class="btn-diff medium">Средно</button>
+                    <button onclick="loadQuestions('hard')" class="btn-diff hard">Трудно</button>
+                </div>
+            </div>
 
-    <div id="auth-box">
-        <div class="auth-tabs">
-            <button id="tab-login-btn" type="button" class="auth-tab-btn active" onclick="switchAuthTab('login')">Вход</button>
-            <button id="tab-register-btn" type="button" class="auth-tab-btn" onclick="switchAuthTab('register')">Регистрация</button>
-        </div>
-
-        <h3 id="auth-title">Влез в профила си:</h3>
-        
-        <div class="form-group">
-            <label>Потребителско име:</label>
-            <input type="text" id="auth-username" autocomplete="off" placeholder="Въведи име...">
-        </div>
-        
-        <div class="form-group">
-            <label>Парола:</label>
-            <input type="password" id="auth-password" autocomplete="off" placeholder="Въведи парола...">
-        </div>
-        
-        <button id="auth-submit-btn" type="button" class="btn-submit" onclick="handleAuthSubmit(event)">Влез </button>
-        
-        <p id="auth-error" style="color: red; font-weight: bold; margin-top: 10px;"></p>
-    </div>
-
-    <div id="game-box" style="display: none;">
-        <h2 id="welcome-message">Добре дошъл!</h2>
-        <p>Избери трудност, за да започнеш играта:</p>
-        
-        <button class="btn-diff" onclick="loadQuestions('easy')">Лесно</button>
-        <button class="btn-diff" onclick="loadQuestions('medium')">Средно</button>
-        <button class="btn-diff" onclick="loadQuestions('hard')">Трудно</button>
-
-        <hr>
-
-        <div id="quiz-box" style="display:none;">
-            <h2 id="question-text">Въпросът ще се зареди тук...</h2>
-            <div id="options-container"></div>
-            <p id="result"></p>
+            <div id="quiz-box" style="display: none;">
+                <h3 id="question-text">Въпросът ще се зареди тук...</h3>
+                <div id="options-container"></div>
+                <p id="result"></p>
+            </div>
         </div>
     </div>
-</div>
 
-<script src="js/main.js"></script>
+    <script src="js/main.js"></script>
 </body>
 </html>
