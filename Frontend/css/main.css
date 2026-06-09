@@ -1,8 +1,7 @@
 body {
     font-family: Arial, sans-serif;
-    /* Модерен градиент, който прелива по диагонал */
     background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #2ecc71 100%);
-    background-attachment: fixed; /* Заключва градиента, за да не се разтяга при скрол */
+    background-attachment: fixed;
     min-height: 100vh;
     display: flex;
     justify-content: center;
@@ -103,8 +102,6 @@ body {
     margin-top: 15px;
 }
 
-/* ДОБАВИ НАЙ-ОТДОЛУ В css/game.css */
-
 .badges-section {
     margin-top: 25px;
     background: #fdfdfd;
@@ -118,7 +115,7 @@ body {
     justify-content: space-between;
     gap: 10px;
     margin-top: 10px;
-    flex-wrap: wrap; /* За по-малки екрани да се пренасят */
+    flex-wrap: wrap;
 }
 
 .badge {
@@ -169,4 +166,51 @@ body {
     0% { box-shadow: 0 0 0px rgba(46, 204, 113, 0); }
     50% { box-shadow: 0 0 15px rgba(46, 204, 113, 0.8); }
     100% { box-shadow: 0 0 0px rgba(46, 204, 113, 0); }
+}
+
+.quiz-status {
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+    background: #f0f4f8;
+    padding: 10px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    border: 1px solid #d0d7de;
+}
+
+#timer-display {
+    color: #d9383a;
+}
+
+.summary-section {
+    background: #ffffff;
+    border: 2px solid #2196F3;
+    padding: 20px;
+    border-radius: 12px;
+    margin-top: 20px;
+}
+
+.summary-item {
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 8px;
+    border-left: 6px solid;
+    text-align: left;
+}
+
+.summary-item.correct-style {
+    background: #ebfbe6;
+    border-color: #2ecc71;
+    color: #1e4620;
+}
+
+.summary-item.incorrect-style {
+    background: #fdf2f2;
+    border-color: #f44336;
+    color: #611a15;
+}
+
+.summary-item p {
+    margin: 4px 0;
 }

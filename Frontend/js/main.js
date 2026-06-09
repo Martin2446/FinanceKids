@@ -2,27 +2,53 @@ let currentQuestion = null;
 let loggedInUser = sessionStorage.getItem('loggedInUser');
 let userPoints = parseInt(sessionStorage.getItem('userPoints')) || 0;
 
+let gameQuestions = [];
+let currentQuestionIndex = 0;
+let timerInterval = null;
+let timeLeft = 0;
+let userAnswersSummary = [];
+
+const DIFFICULTY_TIMES = {
+    'easy': 120,
+    'medium': 90,
+    'hard': 60
+};
+
 if (!loggedInUser) {
     window.location.href = "index.html";
 } else {
+    updateWelcomeMessage();
+    updateBadges(); 
+}
+
+function updateWelcomeMessage() {
     const isGuest = sessionStorage.getItem('isGuest') === 'true';
     if (isGuest) {
         document.getElementById('welcome-message').innerText = `Профил: ${loggedInUser} (Точки: ${userPoints})`;
     } else {
         document.getElementById('welcome-message').innerText = `Добре дошъл, ${loggedInUser}! (Точки: ${userPoints})`;
     }
-    updateBadges();
 }
 
 async function loadQuestions(difficulty) {
+    document.getElementById('summary-box').style.display = "none";
     document.getElementById('result').innerText = "";
+    
     try {
         const response = await fetch(`http://127.0.0.1:8000/api/questions?difficulty=${difficulty}`);
-        const questions = await response.json();
+        const allQuestions = await response.json();
+        
+        if (allQuestions.length > 0) {
+            document.getElementById('lobby-container').style.display = "none";
+            gameQuestions = allQuestions.sort(() => 0.5 - Math.random()).slice(0, 5);
 
-        if (questions.length > 0) {
-            currentQuestion = questions[Math.floor(Math.random() * questions.length)];
-            displayQuestion(currentQuestion);
+            currentQuestionIndex = 0;
+            userAnswersSummary = [];
+            
+            timeLeft = DIFFICULTY_TIMES[difficulty] || 60;
+            
+            startTimer();
+            displayCurrentQuestion();
         } else {
             alert("Няма добавени въпроси за тази трудност.");
         }
@@ -31,55 +57,108 @@ async function loadQuestions(difficulty) {
     }
 }
 
-function displayQuestion(q) {
-    document.getElementById('quiz-box').style.display = "block";
-    document.getElementById('question-text').innerText = q.question;
-    const container = document.getElementById('options-container');
-    container.innerHTML = "";
+function startTimer() {
+    clearInterval(timerInterval);
+    document.getElementById('time-left').innerText = timeLeft;
 
-    q.options.forEach((option, index) => {
+    timerInterval = setInterval(() => {
+        timeLeft--;
+        document.getElementById('time-left').innerText = timeLeft;
+
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            alert("⌛ Времето изтече!");
+            endGame();
+        }
+    }, 1000);
+}
+
+function displayCurrentQuestion() {
+    document.getElementById('quiz-box').style.display = "block";
+    document.getElementById('question-progress').innerText = `Въпрос: ${currentQuestionIndex + 1} / 5`;
+    
+    currentQuestion = gameQuestions[currentQuestionIndex];
+    document.getElementById('question-text').innerText = currentQuestion.question;
+    
+    const container = document.getElementById('options-container');
+    container.innerHTML = ""; 
+
+    currentQuestion.options.forEach((option, index) => {
         const button = document.createElement('button');
         button.className = 'btn-option';
         button.innerText = option;
-        button.onclick = () => checkAnswer(index);
+        button.onclick = () => handleAnswerSelection(index);
         container.appendChild(button);
     });
 }
 
-async function checkAnswer(selectedIndex) {
-    const resultElement = document.getElementById('result');
+async function handleAnswerSelection(selectedIndex) {
+    const isCorrect = selectedIndex === currentQuestion.correct;
+    
+    userAnswersSummary.push({
+        question: currentQuestion.question,
+        userAnswer: currentQuestion.options[selectedIndex],
+        correctAnswer: currentQuestion.options[currentQuestion.correct],
+        isCorrect: isCorrect
+    });
 
-    if (selectedIndex === currentQuestion.correct) {
+    if (isCorrect) {
         userPoints += 10;
         sessionStorage.setItem('userPoints', userPoints);
+        updateWelcomeMessage();
+        updateBadges(); 
 
-        updateBadges();
-        const isGuest = sessionStorage.getItem('isGuest') === 'true';
-
-        if (isGuest) {
-            document.getElementById('welcome-message').innerText = `Профил: ${loggedInUser} (Точки: ${userPoints})`;
-        } else {
-            document.getElementById('welcome-message').innerText = `Добре дошъл, ${loggedInUser}! (Точки: ${userPoints})`;
-        }
-
-        resultElement.innerText = "Браво! Правилен отговор! +10 точки 🪙";
-        resultElement.style.color = "green";
-
-        if (!isGuest) {
+        if (sessionStorage.getItem('isGuest') !== 'true') {
             try {
                 await fetch(`http://127.0.0.1:8000/api/users/update_points`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ username: loggedInUser, points_to_add: 10 })
                 });
-            } catch (e) {
-                console.error("Грешка при синхронизация на регистриран потребител:", e);
-            }
+            } catch (e) { console.error(e); }
         }
-    } else {
-        resultElement.innerText = "❌ Опа! Опитай пак.";
-        resultElement.style.color = "red";
     }
+
+    currentQuestionIndex++;
+    if (currentQuestionIndex < gameQuestions.length) {
+        displayCurrentQuestion();
+    } else {
+        endGame();
+    }
+}
+
+function endGame() {
+    clearInterval(timerInterval)
+    document.getElementById('quiz-box').style.display = "none";
+    document.getElementById('lobby-container').style.display = "block";
+    
+    const summaryBox = document.getElementById('summary-box');
+    const summaryScore = document.getElementById('summary-score');
+    const summaryDetails = document.getElementById('summary-details');
+    
+    summaryBox.style.display = "block";
+    
+    const correctCount = userAnswersSummary.filter(a => a.isCorrect).length;
+    summaryScore.innerText = `Ти отговори правилно на ${correctCount} от 5 въпроса! 🎉`;
+    
+    summaryDetails.innerHTML = "";
+    userAnswersSummary.forEach((item, idx) => {
+        const itemDiv = document.createElement('div');
+        itemDiv.className = `summary-item ${item.isCorrect ? 'correct-style' : 'incorrect-style'}`;
+        
+        itemDiv.innerHTML = `
+            <p><strong>Въпрос ${idx + 1}:</strong> ${item.question}</p>
+            <p>👉 Твоят отговор: <span class="answer-text">${item.userAnswer}</span></p>
+            ${!item.isCorrect ? `<p>✅ Правилен отговор: <span>${item.correctAnswer}</span></p>` : ''}
+        `;
+        summaryDetails.appendChild(itemDiv);
+    });
+}
+
+function logout() {
+    clearInterval(timerInterval);
+    sessionStorage.clear();
+    window.location.href = "index.html";
 }
 
 function updateBadges() {
@@ -90,7 +169,6 @@ function updateBadges() {
         { id: 'badge-guru', target: 200 },
         { id: 'badge-millionaire', target: 500 }
     ];
-
     badges.forEach(b => {
         const badgeElement = document.getElementById(b.id);
         if (badgeElement) {
