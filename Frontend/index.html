@@ -16,42 +16,64 @@
             </div>
 
             <div id="lobby-container">
-                <div class="difficulty-section">
-                    <h3>Изберете трудност:</h3>
-                    <div class="diff-buttons">
-                        <button onclick="loadQuestions('easy')" class="btn-diff easy">Лесно</button>
-                        <button onclick="loadQuestions('medium')" class="btn-diff medium">Средно</button>
-                        <button onclick="loadQuestions('hard')" class="btn-diff hard">Трудно</button>
-                    </div>
-                </div>
+                <div class="lobby-layout">
 
-                <div class="badges-section">
-                    <h3>Твоите Нинджа Значки:</h3>
-                    <div class="badges-container">
-                        <div id="badge-first_points" class="badge locked">
-                            <div class="badge-icon">🪙</div>
-                            <div class="badge-name">Първа касичка</div>
-                            <div class="badge-desc">Събери 10 точки</div>
+                    <div class="lobby-main">
+                        <div class="difficulty-section">
+                            <h3>Изберете трудност:</h3>
+                            <div class="diff-buttons">
+                                <button onclick="loadQuestions('easy')" class="btn-diff easy">Лесно</button>
+                                <button onclick="loadQuestions('medium')" class="btn-diff medium">Средно</button>
+                                <button onclick="loadQuestions('hard')" class="btn-diff hard">Трудно</button>
+                            </div>
                         </div>
-                        <div id="badge-apprentice" class="badge locked">
-                            <div class="badge-icon">🥷</div>
-                            <div class="badge-name">Финансов чирак</div>
-                            <div class="badge-desc">Събери 50 точки</div>
+
+                        <div class="badges-section">
+                            <h3>Твоите Значки:</h3>
+                            <div class="badges-container">
+                                <div id="badge-first_points" class="badge locked">
+                                    <div class="badge-icon">🪙</div>
+                                    <div class="badge-name">Първа касичка</div>
+                                    <div class="badge-desc">10 XP</div>
+                                </div>
+                                <div id="badge-apprentice" class="badge locked">
+                                    <div class="badge-icon">🥷</div>
+                                    <div class="badge-name">Финансов чирак</div>
+                                    <div class="badge-desc">50 XP</div>
+                                </div>
+                                <div id="badge-ninja" class="badge locked">
+                                    <div class="badge-icon">🐉</div>
+                                    <div class="badge-name">Финансов нинджа</div>
+                                    <div class="badge-desc">100 XP</div>
+                                </div>
+                                <div id="badge-guru" class="badge locked">
+                                    <div class="badge-icon">🧠</div>
+                                    <div class="badge-name">Спестовен гуру</div>
+                                    <div class="badge-desc">200 XP</div>
+                                </div>
+                                <div id="badge-millionaire" class="badge locked">
+                                    <div class="badge-icon">👑</div>
+                                    <div class="badge-name">Милионер</div>
+                                    <div class="badge-desc">500 XP</div>
+                                </div>
+                            </div>
                         </div>
-                        <div id="badge-ninja" class="badge locked">
-                            <div class="badge-icon">🐉</div>
-                            <div class="badge-name">Финансов нинджа</div>
-                            <div class="badge-desc">Събери 100 точки</div>
-                        </div>
-                        <div id="badge-guru" class="badge locked">
-                            <div class="badge-icon">🧠</div>
-                            <div class="badge-name">Спестовен гуру</div>
-                            <div class="badge-desc">Събери 200 точки</div>
-                        </div>
-                        <div id="badge-millionaire" class="badge locked">
-                            <div class="badge-icon">👑</div>
-                            <div class="badge-name">Милионер</div>
-                            <div class="badge-desc">Събери 500 точки</div>
+                    </div>
+
+                    <div class="lobby-side">
+                        <div class="leaderboard-container">
+                            <h3>🏆 Топ 10 Нинджи</h3>
+                            <table class="leaderboard-table">
+                                <thead>
+                                    <tr>
+                                        <th>Място</th>
+                                        <th>Име</th>
+                                        <th>XP</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="leaderboard-rows">
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>

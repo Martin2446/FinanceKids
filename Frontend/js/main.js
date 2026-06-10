@@ -19,6 +19,7 @@ if (!loggedInUser) {
 } else {
     updateWelcomeMessage();
     updateBadges(); 
+    refreshLeaderboard()
 }
 
 function updateWelcomeMessage() {
@@ -85,9 +86,14 @@ function displayCurrentQuestion() {
 
     currentQuestion.options.forEach((option, index) => {
         const button = document.createElement('button');
+        button.setAttribute('type', 'button');
         button.className = 'btn-option';
         button.innerText = option;
-        button.onclick = () => handleAnswerSelection(index);
+        button.addEventListener('click', (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            handleAnswerSelection(index);
+        });
         container.appendChild(button);
     });
 }
@@ -131,6 +137,8 @@ function endGame() {
     clearInterval(timerInterval)
     document.getElementById('quiz-box').style.display = "none";
     document.getElementById('lobby-container').style.display = "block";
+
+    refreshLeaderboard();
     
     const summaryBox = document.getElementById('summary-box');
     const summaryScore = document.getElementById('summary-score');
@@ -155,12 +163,6 @@ function endGame() {
     });
 }
 
-function logout() {
-    clearInterval(timerInterval);
-    sessionStorage.clear();
-    window.location.href = "index.html";
-}
-
 function updateBadges() {
     const badges = [
         { id: 'badge-first_points', target: 10 },
@@ -181,4 +183,44 @@ function updateBadges() {
             }
         }
     });
+}
+
+async function refreshLeaderboard() {
+    const rowsContainer = document.getElementById('leaderboard-rows');
+    if (!rowsContainer) return;
+    
+    rowsContainer.innerHTML = "<tr><td colspan='3'>Зареждане...</td></tr>";
+
+    try {
+        const response = await fetch('http://127.0.0.1:8000/api/leaderboard');
+        const data = await response.json();
+        rowsContainer.innerHTML = "";
+
+        if (data.length === 0) {
+            rowsContainer.innerHTML = "<tr><td colspan='3'>Няма резултати</td></tr>";
+            return;
+        }
+
+        data.forEach((user, index) => {
+            const tr = document.createElement('tr');
+            let rankDisplay = index + 1;
+            if (index === 0) rankDisplay = "🥇";
+            if (index === 1) rankDisplay = "🥈";
+            if (index === 2) rankDisplay = "🥉";
+
+            if (user.username === loggedInUser) {
+                tr.classList.add('current-user-row');
+            }
+
+            tr.innerHTML = `
+                <td class="rank">${rankDisplay}</td>
+                <td class="username"> ${user.username}</td>
+                <td class="xp">${user.points}</td>
+            `;
+            rowsContainer.appendChild(tr);
+        });
+    } catch (error) {
+        console.error("Грешка при лидерборда:", error);
+        rowsContainer.innerHTML = "<tr><td colspan='3' style='color:red;'>Грешка</td></tr>";
+    }
 }

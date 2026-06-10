@@ -1,7 +1,6 @@
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from typing import Optional
 import sqlite3
 import json
 
@@ -252,3 +251,16 @@ def update_user_points(data: UpdatePointsModel):
     conn.close()
     
     return {"message": "Точките са обновени успешно!", "new_points": new_points}
+
+@app.get("/api/leaderboard")
+def get_leaderboard():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    cursor.execute("SELECT username, points FROM users ORDER BY points DESC LIMIT 10")
+    top_users = cursor.fetchall()
+    
+    conn.close()
+    
+    leaderboard_data = [{"username": user["username"], "points": user["points"]} for user in top_users]
+    return leaderboard_data

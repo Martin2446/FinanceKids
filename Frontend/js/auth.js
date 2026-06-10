@@ -51,6 +51,7 @@ async function handleAuthSubmit() {
         if (response.ok) {
             sessionStorage.setItem('loggedInUser', data.username);
             sessionStorage.setItem('userPoints', data.points || 0);
+            sessionStorage.removeItem('isGuest');
 
             window.location.href = "index.html";
         } else {
