@@ -18,7 +18,7 @@ if (!loggedInUser) {
     window.location.href = "index.html";
 } else {
     updateWelcomeMessage();
-    updateBadges(); 
+    updateBadges();
     refreshLeaderboard()
 }
 
@@ -34,20 +34,20 @@ function updateWelcomeMessage() {
 async function loadQuestions(difficulty) {
     document.getElementById('summary-box').style.display = "none";
     document.getElementById('result').innerText = "";
-    
+
     try {
         const response = await fetch(`http://127.0.0.1:8000/api/questions?difficulty=${difficulty}`);
         const allQuestions = await response.json();
-        
+
         if (allQuestions.length > 0) {
             document.getElementById('lobby-container').style.display = "none";
             gameQuestions = allQuestions.sort(() => 0.5 - Math.random()).slice(0, 5);
 
             currentQuestionIndex = 0;
             userAnswersSummary = [];
-            
+
             timeLeft = DIFFICULTY_TIMES[difficulty] || 60;
-            
+
             startTimer();
             displayCurrentQuestion();
         } else {
@@ -77,12 +77,12 @@ function startTimer() {
 function displayCurrentQuestion() {
     document.getElementById('quiz-box').style.display = "block";
     document.getElementById('question-progress').innerText = `Въпрос: ${currentQuestionIndex + 1} / 5`;
-    
+
     currentQuestion = gameQuestions[currentQuestionIndex];
     document.getElementById('question-text').innerText = currentQuestion.question;
-    
+
     const container = document.getElementById('options-container');
-    container.innerHTML = ""; 
+    container.innerHTML = "";
 
     currentQuestion.options.forEach((option, index) => {
         const button = document.createElement('button');
@@ -100,7 +100,7 @@ function displayCurrentQuestion() {
 
 async function handleAnswerSelection(selectedIndex) {
     const isCorrect = selectedIndex === currentQuestion.correct;
-    
+
     userAnswersSummary.push({
         question: currentQuestion.question,
         userAnswer: currentQuestion.options[selectedIndex],
@@ -112,7 +112,7 @@ async function handleAnswerSelection(selectedIndex) {
         userPoints += 10;
         sessionStorage.setItem('userPoints', userPoints);
         updateWelcomeMessage();
-        updateBadges(); 
+        updateBadges();
 
         if (sessionStorage.getItem('isGuest') !== 'true') {
             try {
@@ -139,21 +139,26 @@ function endGame() {
     document.getElementById('lobby-container').style.display = "block";
 
     refreshLeaderboard();
-    
+
     const summaryBox = document.getElementById('summary-box');
     const summaryScore = document.getElementById('summary-score');
     const summaryDetails = document.getElementById('summary-details');
-    
+
     summaryBox.style.display = "block";
-    
+
     const correctCount = userAnswersSummary.filter(a => a.isCorrect).length;
     summaryScore.innerText = `Ти отговори правилно на ${correctCount} от 5 въпроса! 🎉`;
-    
+
+    if (correctCount === 5) {
+        sessionStorage.setItem('badge_perfect', 'true');
+        updateBadges();
+    }
+
     summaryDetails.innerHTML = "";
     userAnswersSummary.forEach((item, idx) => {
         const itemDiv = document.createElement('div');
         itemDiv.className = `summary-item ${item.isCorrect ? 'correct-style' : 'incorrect-style'}`;
-        
+
         itemDiv.innerHTML = `
             <p><strong>Въпрос ${idx + 1}:</strong> ${item.question}</p>
             <p>👉 Твоят отговор: <span class="answer-text">${item.userAnswer}</span></p>
@@ -164,14 +169,15 @@ function endGame() {
 }
 
 function updateBadges() {
-    const badges = [
+    const pointBadges = [
         { id: 'badge-first_points', target: 10 },
         { id: 'badge-apprentice', target: 50 },
         { id: 'badge-ninja', target: 100 },
         { id: 'badge-guru', target: 200 },
         { id: 'badge-millionaire', target: 500 }
     ];
-    badges.forEach(b => {
+
+    pointBadges.forEach(b => {
         const badgeElement = document.getElementById(b.id);
         if (badgeElement) {
             if (userPoints >= b.target) {
@@ -183,12 +189,24 @@ function updateBadges() {
             }
         }
     });
+
+    const perfectBadgeElement = document.getElementById('badge-perfect');
+    if (perfectBadgeElement) {
+        const hasPerfectScore = sessionStorage.getItem('badge_perfect') === 'true';
+        if (hasPerfectScore) {
+            perfectBadgeElement.classList.remove('locked');
+            perfectBadgeElement.classList.add('unlocked');
+        } else {
+            perfectBadgeElement.classList.add('locked');
+            perfectBadgeElement.classList.remove('unlocked');
+        }
+    }
 }
 
 async function refreshLeaderboard() {
     const rowsContainer = document.getElementById('leaderboard-rows');
     if (!rowsContainer) return;
-    
+
     rowsContainer.innerHTML = "<tr><td colspan='3'>Зареждане...</td></tr>";
 
     try {
