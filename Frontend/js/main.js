@@ -1,3 +1,5 @@
+const API_URL = "http://127.0.0.1:8000/api";
+
 let currentQuestion = null;
 let loggedInUser = sessionStorage.getItem('loggedInUser');
 let userPoints = parseInt(sessionStorage.getItem('userPoints')) || 0;
@@ -36,7 +38,7 @@ async function loadQuestions(difficulty) {
     document.getElementById('result').innerText = "";
 
     try {
-        const response = await fetch(`http://127.0.0.1:8000/api/questions?difficulty=${difficulty}`);
+        const response = await fetch(`${API_URL}/questions?difficulty=${difficulty}`);
         const allQuestions = await response.json();
 
         if (allQuestions.length > 0) {
@@ -116,7 +118,7 @@ async function handleAnswerSelection(selectedIndex) {
 
         if (sessionStorage.getItem('isGuest') !== 'true') {
             try {
-                await fetch(`http://127.0.0.1:8000/api/users/update_points`, {
+                await fetch(`${API_URL}/users/update_points`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ username: loggedInUser, points_to_add: 10 })
@@ -210,7 +212,7 @@ async function refreshLeaderboard() {
     rowsContainer.innerHTML = "<tr><td colspan='3'>Зареждане...</td></tr>";
 
     try {
-        const response = await fetch('http://127.0.0.1:8000/api/leaderboard');
+        const response = await fetch(`${API_URL}/leaderboard`);
         const data = await response.json();
         rowsContainer.innerHTML = "";
 

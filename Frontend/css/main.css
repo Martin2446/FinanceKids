@@ -299,3 +299,14 @@ body {
         flex-direction: column;
     }
 }
+
+.academy-button {
+    background: #2ecc71;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-right: 5px;
+}

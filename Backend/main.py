@@ -21,6 +21,16 @@ def get_db_connection():
     conn.row_factory = sqlite3.Row 
     return conn
 
+class LectureQuestionModel(BaseModel):
+    question: str
+    options: list
+    correct: int
+
+class LectureCreateModel(BaseModel):
+    title: str
+    content: str
+    quiz: list[LectureQuestionModel]
+
 def init_db():
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -40,28 +50,29 @@ def init_db():
             CREATE TABLE IF NOT EXISTS questions_{diff} (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 question TEXT NOT NULL,
-                options TEXT NOT NULL,  -- Ще пазим отговорите като JSON текст
+                options TEXT NOT NULL,
                 correct INTEGER NOT NULL
             )
         ''')
-    
-    conn.commit()
-    
-    for diff in difficulties:
-        cursor.execute(f"SELECT COUNT(*) FROM questions_{diff}")
-        if cursor.fetchone()[0] == 0:
-            if diff == "easy":
-                cursor.execute("INSERT INTO questions_easy (question, options, correct) VALUES (?, ?, ?)",
-                               ("Какво е най-добре да направиш, ако получиш пари за рождения си ден?", 
-                                json.dumps(["Да ги изхарчиш веднага за бонбони", "Да ги скриеш под възглавницата", "Да спестиш част от тях в касичка", "Да ги хвърлиш във въздуха"]), 2))
-            elif diff == "medium":
-                cursor.execute("INSERT INTO questions_medium (question, options, correct) VALUES (?, ?, ?)",
-                               ("Каква е разликата между 'нужда' и 'желание'?", 
-                                json.dumps(["Няма никаква разлика", "Нуждата е нещо важно за живота (храна), а желанието е за удоволствие (играчка)", "Желанието е по-важно от нуждата", "Нуждите са безплатни"]), 1))
-            elif diff == "hard":
-                cursor.execute("INSERT INTO questions_hard (question, options, correct) VALUES (?, ?, ?)",
-                               ("Какво означава да инвестираш пари?", 
-                                json.dumps(["Да ги дадеш назаем на приятел", "Да ги похарчиш в мола", "Да ги вложиш в нещо с цел те да нараснат след време", "Да ги заровиш в градината"]), 2))
+
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS lectures (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            title TEXT NOT NULL,
+            content TEXT NOT NULL
+        )
+    ''')
+
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS lecture_questions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            lecture_id INTEGER NOT NULL,
+            question TEXT NOT NULL,
+            options TEXT NOT NULL,
+            correct INTEGER NOT NULL,
+            FOREIGN KEY (lecture_id) REFERENCES lectures(id) ON DELETE CASCADE
+        )
+    ''')
     
     conn.commit()
     conn.close()
@@ -264,3 +275,71 @@ def get_leaderboard():
     
     leaderboard_data = [{"username": user["username"], "points": user["points"]} for user in top_users]
     return leaderboard_data
+
+@app.get("/api/lectures")
+def get_lectures():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    cursor.execute("SELECT * FROM lectures")
+    lecture_rows = cursor.fetchall()
+    
+    result = []
+    for l_row in lecture_rows:
+        cursor.execute("SELECT * FROM lecture_questions WHERE lecture_id = ?", (l_row["id"],))
+        q_rows = cursor.fetchall()
+        
+        quiz = [{
+            "question": q["question"],
+            "options": json.loads(q["options"]),
+            "correct": q["correct"]
+        } for q in q_rows]
+        
+        result.append({
+            "id": f"lecture_{l_row['id']}",
+            "db_id": l_row["id"],
+            "title": l_row["title"],
+            "content": l_row["content"],
+            "quiz": quiz
+        })
+    conn.close()
+    return result
+
+@app.post("/api/admin/lectures")
+def add_lecture(data: LectureCreateModel):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    try:
+        cursor.execute("INSERT INTO lectures (title, content) VALUES (?, ?)", (data.title, data.content))
+        lecture_id = cursor.lastrowid
+        
+        for q in data.quiz:
+            options_json = json.dumps(q.options)
+            cursor.execute(
+                "INSERT INTO lecture_questions (lecture_id, question, options, correct) VALUES (?, ?, ?, ?)",
+                (lecture_id, q.question, options_json, q.correct)
+            )
+        conn.commit()
+    except Exception as e:
+        conn.close()
+        raise HTTPException(status_code=500, detail=f"Грешка при запис: {str(e)}")
+        
+    conn.close()
+    return {"message": "Лекцията и въпросите са добавени успешно в базата данни!"}
+
+@app.delete("/api/admin/lectures/{lecture_id}")
+def delete_lecture(lecture_id: int):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT * FROM lectures WHERE id = ?", (lecture_id,))
+    if not cursor.fetchone():
+        conn.close()
+        raise HTTPException(status_code=404, detail="Лекцията не е намерена!")
+    
+    cursor.execute("DELETE FROM lectures WHERE id = ?", (lecture_id,))
+    conn.commit()
+    conn.close()
+    
+    return {"message": f"Лекцията с ID {lecture_id} и нейните въпроси бяха изтрити успешно!"}

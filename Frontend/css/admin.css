@@ -1,72 +1,86 @@
-body { 
-    font-family: Arial, sans-serif; 
-    background-color: #f4f7f6; 
-    padding: 20px; 
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f7f6;
+    padding: 20px;
 }
-.container { 
-    max-width: 800px; 
-    margin: 0 auto; 
-    background: white; 
-    padding: 20px; 
-    border-radius: 8px; 
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
-.form-group { 
-    margin-bottom: 12px; 
+
+.form-group {
+    margin-bottom: 12px;
 }
-label { 
-    display: block; 
-    font-weight: bold; 
-    margin-bottom: 5px; 
+
+label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
 }
-input, select, textarea { 
-    width: 100%; 
-    padding: 8px; 
-    box-sizing: border-box; 
-    border-radius: 4px; 
-    border: 1px solid #ccc; 
+
+input,
+select,
+textarea {
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+    border-radius: 4px;
+    border: 1px solid #ccc;
 }
-button { 
-    padding: 10px 15px; 
-    cursor: pointer; 
-    border: none; 
-    border-radius: 4px; 
-    font-weight: bold; 
+
+button {
+    padding: 10px 15px;
+    cursor: pointer;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
 }
-.btn-add { 
-    background-color: #28a745; 
-    color: white; 
-    width: 100%; 
+
+.btn-add {
+    background-color: #28a745;
+    color: white;
+    width: 100%;
 }
-.btn-delete { 
-    background-color: #dc3545; 
-    color: white; 
-    padding: 5px 10px; 
-    font-size: 12px; 
+
+.btn-delete {
+    background-color: #dc3545;
+    color: white;
+    padding: 5px 10px;
+    font-size: 12px;
 }
-.question-item { 
-    background: #f9f9f9; 
-    padding: 10px; 
-    margin: 10px 0; 
-    border-left: 5px solid #007bff; 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center; 
+
+.question-item {
+    background: #f9f9f9;
+    padding: 10px;
+    margin: 10px 0;
+    border-left: 5px solid #007bff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
-.nav-buttons { 
-    margin-bottom: 20px; 
-    text-align: center; 
+
+.nav-buttons {
+    margin-bottom: 20px;
+    text-align: center;
 }
-.btn-tab { 
-    background-color: #007bff; 
-    color: white; 
-    margin: 0 5px; 
+
+.btn-tab {
+    background-color: #007bff;
+    color: white;
+    margin: 0 5px;
 }
+
 .main-nav {
     display: flex;
     justify-content: center;
     margin-bottom: 20px;
 }
+
 .btn-main-tab {
     background-color: #e7e7e7;
     color: black;
@@ -78,10 +92,12 @@ button {
     border-radius: 5px;
     font-weight: bold;
 }
+
 .btn-main-tab.active {
     background-color: #007bff;
     color: white;
 }
+
 .user-item {
     background: #f1f3f5;
     padding: 12px;
@@ -91,4 +107,49 @@ button {
     justify-content: space-between;
     align-items: center;
     border-left: 5px solid #28a745;
+}
+
+.lecture-question-box {
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    padding: 15px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    position: relative;
+}
+
+.lecture-question-box h5 {
+    margin: 0 0 10px 0;
+    color: #4a5568;
+    font-size: 14px;
+}
+
+.lecture-options-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin: 8px 0;
+}
+
+.btn-remove-box {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #dc3545;
+    color: white;
+    padding: 3px 8px;
+    font-size: 11px;
+    border-radius: 3px;
+}
+
+.lecture-item-row {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    padding: 15px;
+    margin: 10px 0;
+    border-left: 5px solid #2196F3;
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }

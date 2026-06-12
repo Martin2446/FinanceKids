@@ -1,3 +1,5 @@
+const API_URL = "http://127.0.0.1:8000/api";
+
 let currentAuthMode = 'login';
 
 function switchAuthTab(mode) {
@@ -40,7 +42,7 @@ async function handleAuthSubmit() {
     const endpoint = currentAuthMode === 'login' ? 'login' : 'register';
 
     try {
-        const response = await fetch(`http://127.0.0.1:8000/api/${endpoint}`, {
+        const response = await fetch(`${API_URL}/${endpoint}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username: usernameInput, password: passwordInput })
