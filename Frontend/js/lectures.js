@@ -60,7 +60,7 @@ function openLecture(lecture) {
         <div class="lecture-text-content">
             ${lecture.content}
         </div>
-        <button onclick="startLectureQuiz()" class="btn-action">Премини към теста към урока 🎯</button>
+        <button onclick="startLectureQuiz()" class="btn-action">Премини към теста към урока</button>
     `;
 }
 
@@ -116,19 +116,19 @@ function finishLectureQuiz() {
 
         view.innerHTML = `
             <div class="quiz-result-wrapper text-center">
-                <h2 class="text-success">🎉 Браво! Изпитът е взет успешно!</h2>
+                <h2 class="text-success">Браво! Изпитът е взет успешно!</h2>
                 <p class="result-score-text">Ти отговори вярно на <strong>${correctAnswers} от ${totalQuestions}</strong> въпроса.</p>
                 <p>Урокът е официално завършен и маркиран в твоя профил!</p>
-                <button onclick="resetAcademyView()" class="btn-action btn-blue">Супер 🚀</button>
+                <button onclick="resetAcademyView()" class="btn-action btn-blue">Супер</button>
             </div>
         `;
     } else {
         view.innerHTML = `
             <div class="quiz-result-wrapper text-center">
-                <h2 class="text-danger">😢 Опа, имаш грешки.</h2>
+                <h2 class="text-danger">Опа, имаш грешки.</h2>
                 <p class="result-score-text">Твоят резултат е: <strong>${correctAnswers} от ${totalQuestions}</strong> верни отговора.</p>
                 <p>Прочети лекцията внимателно още веднъж и опитай пак теста, за да я завършиш!</p>
-                <button onclick="openLecture(activeLecture)" class="btn-action btn-orange">Прочети пак 📖</button>
+                <button onclick="openLecture(activeLecture)" class="btn-action btn-orange">Прочети пак</button>
             </div>
         `;
     }

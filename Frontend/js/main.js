@@ -9,6 +9,7 @@ let currentQuestionIndex = 0;
 let timerInterval = null;
 let timeLeft = 0;
 let userAnswersSummary = [];
+let currentDifficulty = 'easy';
 
 const DIFFICULTY_TIMES = {
     'easy': 120,
@@ -36,6 +37,7 @@ function updateWelcomeMessage() {
 async function loadQuestions(difficulty) {
     document.getElementById('summary-box').style.display = "none";
     document.getElementById('result').innerText = "";
+    currentDifficulty = difficulty;
 
     try {
         const response = await fetch(`${API_URL}/questions?difficulty=${difficulty}`);
@@ -111,7 +113,14 @@ async function handleAnswerSelection(selectedIndex) {
     });
 
     if (isCorrect) {
-        userPoints += 10;
+        let pointsToAdd = 5;
+        if (currentDifficulty === 'medium') {
+            pointsToAdd = 10;
+        } else if (currentDifficulty === 'hard') {
+            pointsToAdd = 20;
+        }
+        
+        userPoints += pointsToAdd;
         sessionStorage.setItem('userPoints', userPoints);
         updateWelcomeMessage();
         updateBadges();
@@ -121,7 +130,7 @@ async function handleAnswerSelection(selectedIndex) {
                 await fetch(`${API_URL}/users/update_points`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username: loggedInUser, points_to_add: 10 })
+                    body: JSON.stringify({ username: loggedInUser, points_to_add: pointsToAdd })
                 });
             } catch (e) { console.error(e); }
         }
